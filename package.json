@@ -1,20 +1,20 @@
 {
-  "name": "the-smart-online-ticket-booking-system",
+  "name": "smart-ticket-booking-backend",
   "version": "1.0.0",
-  "description": "The Smart Online Ticket Booking System - Train & Bus Booking Platform",
-  "main": "backend/server.js",
+  "description": "Backend API for The Smart Online Ticket Booking System",
+  "main": "server.js",
   "scripts": {
-    "start": "node backend/server.js",
-    "init-db": "node database/init-db.js"
+    "start": "node server.js",
+    "init-db": "node ../database/init-db.js"
   },
   "keywords": [
     "ticket-booking",
     "train",
     "bus",
+    "fullstack",
     "sqlite",
-    "nodejs",
-    "fullstack"
+    "rest-api"
   ],
-  "author": "Smart Booking Team",
+  "author": "Smart Ticket System",
   "license": "ISC"
 }

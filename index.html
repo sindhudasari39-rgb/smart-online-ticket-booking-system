@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Smart Online Ticket Booking System | Train & Bus</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎫</text></svg>">
+</head>
+<body>
+
+    <!-- ================= Top Navigation Bar ================= -->
+    <header class="navbar">
+        <a href="#hero" class="nav-brand">
+            <div class="brand-icon-wrapper">
+                🚆
+            </div>
+            <div class="brand-text">
+                <h1>SmartTicket</h1>
+                <span>Smart Online Booking</span>
+            </div>
+        </a>
+
+        <nav>
+            <ul class="nav-links">
+                <li><button class="nav-link active" onclick="app.scrollToSection('registration-section')">📝 Registration</button></li>
+                <li><button class="nav-link" onclick="app.filterSlots('train')">🚆 Train Slots</button></li>
+                <li><button class="nav-link" onclick="app.filterSlots('bus')">🚌 Bus Slots</button></li>
+                <li><button class="nav-link" onclick="app.scrollToSection('dashboard-section')">📊 Bookings Dash</button></li>
+            </ul>
+        </nav>
+
+        <div class="nav-actions">
+            <!-- User Status / Auth Button -->
+            <div id="user-nav-container">
+                <button class="btn btn-secondary btn-sm" onclick="app.openAuthModal('login')">
+                    👤 Login / Register
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- ================= Hero Section with Train Image ================= -->
+    <section id="hero" class="hero-section">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <div class="hero-badge">
+                ✨ Next-Gen Travel Mobility & Live Seat Selection
+            </div>
+            
+            <h1 class="hero-title">
+                The Smart Online<br>
+                <span>Ticket Booking System</span>
+            </h1>
+            
+            <p class="hero-subtitle">
+                Instant reservations for Venkatadri Express, Vande Bharat Express, Guntur Passenger & Luxury Buses. Live seat matrix, group booking mode, and instant digital QR boarding passes.
+            </p>
+        </div>
+    </section>
+
+    <!-- ================= Main Content Container ================= -->
+    <main class="main-container">
+
+        <!-- ================= Passenger Registration Form Section ================= -->
+        <section id="registration-section" class="reg-section-wrap">
+            <div class="reg-card-hero">
+                <div class="reg-card-head">
+                    <div>
+                        <h2>📝 Passenger Registration Form</h2>
+                        <p style="color: var(--text-secondary); font-size: 0.88rem; margin-top: 4px;">
+                            Enter your travel details below to reserve seats on Venkatadri Express, Vande Bharat Express, or Guntur Passenger.
+                        </p>
+                    </div>
+                    <div id="reg-status-indicator" style="font-size: 0.85rem; color: #34d399; font-weight: 700;">
+                        ● Passenger Info Ready
+                    </div>
+                </div>
+
+                <form id="passenger-reg-form" onsubmit="app.handlePageRegistration(event)">
+                    <div class="reg-grid-inputs">
+                        <!-- 1. Name -->
+                        <div class="reg-field">
+                            <label>Passenger Name *</label>
+                            <input type="text" id="reg-form-name" class="search-input" placeholder="e.g. D. Sindhura" value="D. Sindhura">
+                        </div>
+
+                        <!-- 2. Where to Where (From) -->
+                        <div class="reg-field">
+                            <label>From (Departure Station) *</label>
+                            <select id="reg-form-from" class="search-input">
+                                <option value="">Select From Station</option>
+                                <option value="Kacheguda (Hyderabad)" selected>Kacheguda (Hyderabad)</option>
+                                <option value="Secunderabad Junction">Secunderabad Junction</option>
+                                <option value="MGBS Hyderabad">MGBS Hyderabad (Bus)</option>
+                                <option value="Hyderabad Central">Hyderabad Central</option>
+                            </select>
+                        </div>
+
+                        <!-- 3. Where to Where (To) -->
+                        <div class="reg-field">
+                            <label>To (Destination Station) *</label>
+                            <select id="reg-form-to" class="search-input">
+                                <option value="">Select To Station</option>
+                                <option value="Tirupati Main Junction" selected>Tirupati Main Junction</option>
+                                <option value="Visakhapatnam Port">Visakhapatnam Port</option>
+                                <option value="Guntur Junction">Guntur Junction</option>
+                                <option value="Vijayawada Bus Station">Vijayawada Bus Station</option>
+                                <option value="Bengaluru Majestic">Bengaluru Majestic</option>
+                            </select>
+                        </div>
+
+                        <!-- 4. Age -->
+                        <div class="reg-field">
+                            <label>Passenger Age *</label>
+                            <input type="number" id="reg-form-age" class="search-input" min="1" max="120" placeholder="e.g. 23" value="23">
+                        </div>
+
+                        <!-- 5. How Many Seats -->
+                        <div class="reg-field">
+                            <label>How Many Seats *</label>
+                            <select id="reg-form-seats" class="search-input">
+                                <option value="1">1 Seat</option>
+                                <option value="2" selected>2 Seats (Selected)</option>
+                                <option value="3">3 Seats</option>
+                                <option value="4">4 Seats</option>
+                                <option value="5">5 Seats</option>
+                                <option value="6">6 Seats</option>
+                            </select>
+                        </div>
+
+                        <!-- 6. AC or Non-AC -->
+                        <div class="reg-field">
+                            <label>Class: AC or Non-AC *</label>
+                            <div class="ac-toggle-group">
+                                <button type="button" class="ac-btn active" id="btn-pref-ac" onclick="app.setAcPreference('AC')">
+                                    ❄️ AC Class
+                                </button>
+                                <button type="button" class="ac-btn" id="btn-pref-nonac" onclick="app.setAcPreference('Non-AC')">
+                                    🌿 Non-AC
+                                </button>
+                            </div>
+                            <input type="hidden" id="reg-form-ac" value="AC">
+                        </div>
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;">
+                        <span style="font-size: 0.8rem; color: #64748b;">
+                            * Validation message appears only if required fields are omitted.
+                        </span>
+                        <button type="submit" class="btn btn-primary" style="padding: 12px 28px; font-size: 1rem;">
+                            🚀 Continue to Seat Selection ➔
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- ================= Available Travel Slots Section ================= -->
+        <section id="slots-section">
+            <div class="section-head">
+                <div class="section-title-wrap">
+                    <h2>⚡ Available Travel Slots</h2>
+                    <p>Live schedules featuring <strong>Venkatadri Express</strong>, <strong>Vande Bharat Express</strong> & <strong>Guntur Passenger</strong>.</p>
+                </div>
+
+                <!-- Train & Bus Filter Tabs -->
+                <div class="mode-tabs">
+                    <button class="mode-tab active" id="tab-all" onclick="app.filterSlots('all')">
+                        ✨ All Slots
+                    </button>
+                    <button class="mode-tab" id="tab-train" onclick="app.filterSlots('train')">
+                        🚆 Train Slots
+                    </button>
+                    <button class="mode-tab" id="tab-bus" onclick="app.filterSlots('bus')">
+                        🚌 Bus Slots
+                    </button>
+                </div>
+            </div>
+
+            <!-- Slots Grid -->
+            <div id="slots-grid" class="slots-grid">
+                <!-- Dynamically loaded from /api/slots -->
+            </div>
+        </section>
+
+        <!-- ================= Pic 3: Shohoz-Style Bookings Dashboard Section ================= -->
+        <section id="dashboard-section" style="margin-top: 60px;">
+            <div class="section-head">
+                <div class="section-title-wrap">
+                    <h2 style="font-size: 2.2rem; font-weight: 800; color: #ffffff;">Bookings</h2>
+                    <p style="color: #94a3b8; font-size: 1rem;">Upcoming & Previous Tickets</p>
+                </div>
+            </div>
+
+            <!-- Shohoz Dashboard Two-Column Layout (Matching Pic 3) -->
+            <div class="pic3-dashboard-layout">
+                <!-- Left Sidebar Navigation -->
+                <div class="pic3-sidebar-card">
+                    <button class="pic3-tab-link active" id="tab-dash-upcoming" onclick="app.setDashboardTab('upcoming')">
+                        Upcoming Tickets <span>›</span>
+                    </button>
+                    <button class="pic3-tab-link" id="tab-dash-history" onclick="app.setDashboardTab('history')">
+                        Previous Tickets <span>›</span>
+                    </button>
+                </div>
+
+                <!-- Right Main Column -->
+                <div>
+                    <!-- Top Action Bar (Pic 3) -->
+                    <div class="pic3-topbar">
+                        <div class="pic3-filter-pills">
+                            <button class="pic3-pill-btn active" id="pill-all" onclick="app.filterDashCategory('all')">All</button>
+                            <button class="pic3-pill-btn" id="pill-train" onclick="app.filterDashCategory('train')">Train</button>
+                            <button class="pic3-pill-btn" id="pill-bus" onclick="app.filterDashCategory('bus')">Bus</button>
+                            <button class="pic3-pill-btn" id="pill-launch" onclick="app.filterDashCategory('launch')">Launch</button>
+                        </div>
+
+                        <div>
+                            <input
+                                type="text"
+                                id="dash-search-input"
+                                class="pic3-search-input"
+                                placeholder="🔍 Search by ticket or PNR no."
+                                oninput="app.handleDashSearch(this.value)"
+                            >
+                        </div>
+                    </div>
+
+                    <!-- Bookings Cards Container -->
+                    <div id="bookings-list-container">
+                        <!-- Rendered in Pic 3 format from /api/users/:id/bookings -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ================= Pic 1: Circular Seat Selection Modal ================= -->
+    <div id="seat-modal" class="modal-backdrop">
+        <div class="modal-container pic1-modal-container">
+            <!-- Header (Pic 1) -->
+            <div class="pic1-header">
+                <div class="pic1-header-left">
+                    <button class="pic1-back-btn" onclick="app.closeSeatModal()" title="Back to Slots">←</button>
+                    <div>
+                        <div class="pic1-title" id="seat-modal-title">Select Seats</div>
+                        <div id="seat-modal-slot-sub" style="font-size: 0.82rem; color: #94a3b8;">Venkatadri Express</div>
+                    </div>
+                </div>
+
+                <!-- Date Badge Top Right (Pic 1) -->
+                <div class="pic1-date-badge">
+                    <div class="day" id="pic1-day-lbl">THU</div>
+                    <div class="date-num" id="pic1-date-num">17</div>
+                    <div class="month" id="pic1-month-lbl">DEC</div>
+                </div>
+            </div>
+
+            <!-- Horizontal Time Slot Pills (Pic 1) -->
+            <div class="pic1-time-bar" id="pic1-time-slots-container">
+                <button class="pic1-time-pill" onclick="app.selectTimeSlot('10:00')">10:00</button>
+                <button class="pic1-time-pill" onclick="app.selectTimeSlot('11:30')">11:30</button>
+                <button class="pic1-time-pill" onclick="app.selectTimeSlot('2:30')">2:30</button>
+                <button class="pic1-time-pill active" onclick="app.selectTimeSlot('4:45')">4:45</button>
+                <button class="pic1-time-pill" onclick="app.selectTimeSlot('7:20')">7:20</button>
+                <button class="pic1-time-pill" onclick="app.selectTimeSlot('11:10')">11:10</button>
+            </div>
+
+            <!-- Legend Bar (Pic 1) -->
+            <div class="pic1-legend">
+                <div class="pic1-legend-item">
+                    <span class="pic1-legend-dot not-avail"></span>
+                    <span>Not Available</span>
+                </div>
+                <div class="pic1-legend-item">
+                    <span class="pic1-legend-dot avail"></span>
+                    <span>Available</span>
+                </div>
+                <div class="pic1-legend-item">
+                    <span class="pic1-legend-dot selected"></span>
+                    <span>Selected</span>
+                </div>
+                <div class="pic1-legend-item">
+                    <span class="pic1-legend-dot purchased"></span>
+                    <span>Purchased</span>
+                </div>
+            </div>
+
+            <!-- Seat Rows A, B, C (Aisle Gap) D, E (Pic 1) -->
+            <div class="pic1-seat-viewport">
+                <div class="pic1-seat-board" id="pic1-seat-board">
+                    <!-- Loaded dynamically in Rows A, B, C, aisle, D, E -->
+                </div>
+            </div>
+
+            <!-- Bottom Action & Checkout Bar -->
+            <div class="pic1-bottom-bar">
+                <div>
+                    <div style="font-size: 0.85rem; color: #94a3b8;">
+                        Selected: <strong id="summary-seats-count" style="color: #38bdf8;">0</strong> / <span id="target-seats-count">2</span> Seats
+                    </div>
+                    <div style="font-size: 1.3rem; font-weight: 800; color: #ffffff;" id="summary-total-price">
+                        $0.00
+                    </div>
+                    <div id="selected-seats-container" class="selected-seats-chips"></div>
+                </div>
+
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn btn-secondary btn-sm" onclick="app.autoSelectAdjacentSeats()">
+                        ✨ Auto-Group Seats
+                    </button>
+                    <button class="btn btn-primary" id="btn-confirm-booking" onclick="app.processBooking()" style="background: #ff725e; border-color: #ff725e;">
+                        🎟️ Confirm & Book Seats ➔
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= Pic 2: Payment Successful & Mobile Boarding Pass ================= -->
+    <div id="celebration-modal" class="modal-backdrop">
+        <div class="modal-container" style="max-width: 480px; background: transparent; border: none; box-shadow: none;">
+            <div class="pic2-phone-card">
+                <!-- Black Circle Checkmark (Pic 2) -->
+                <div class="pic2-check-circle">✓</div>
+
+                <!-- Headline (Pic 2) -->
+                <h2 class="pic2-title">Payment Successful!</h2>
+                <p class="pic2-subtitle">Your mobile tickets are ready</p>
+
+                <!-- Seat Pills (Pic 2) -->
+                <div class="pic2-seat-pills" id="pic2-seat-pills">
+                    <span class="pic2-pill">Seat VIP15</span>
+                    <span class="pic2-pill">Seat B4</span>
+                    <span class="pic2-pill">Seat C14</span>
+                </div>
+
+                <!-- Ticket Card (Pic 2) -->
+                <div class="pic2-ticket-box">
+                    <div class="pic2-ticket-header">
+                        <div>
+                            <h4 id="pic2-ticket-title">Venkatadri Express</h4>
+                            <div class="sub" id="pic2-ticket-operator">South Central Railway</div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div class="price" id="pic2-ticket-price">$80</div>
+                            <div class="class-badge" id="pic2-ticket-class">AC 3-Tier</div>
+                        </div>
+                    </div>
+
+                    <div class="pic2-ticket-info-grid">
+                        <div class="pic2-info-item">
+                            <div class="lbl">📅 Travel Date</div>
+                            <div class="val" id="pic2-ticket-date">THU 17 DEC</div>
+                        </div>
+                        <div class="pic2-info-item">
+                            <div class="lbl">⏰ Event Time</div>
+                            <div class="val" id="pic2-ticket-time">4:45 PM</div>
+                        </div>
+                        <div class="pic2-info-item" style="grid-column: 1 / -1;">
+                            <div class="lbl">📍 Boarding Station / Platform</div>
+                            <div class="val" id="pic2-ticket-location">Kacheguda Platform 4</div>
+                            <a href="javascript:void(0)" onclick="app.popMessage('info', 'Live Map', 'Route map opened.')" style="font-size: 0.78rem; color: #2563eb; text-decoration: underline;">
+                                View on Map
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Barcode Area (Pic 2) -->
+                    <div class="pic2-barcode-area">
+                        <div class="pic2-barcode-lines"></div>
+                        <div class="pic2-barcode-sub">
+                            📱 Show this QR / Barcode at station entrance.<br>Screenshot recommended for offline access.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Download Ticket Button (Pic 2) -->
+                <button class="pic2-btn-download" onclick="window.print()">
+                    ⬇ Download Ticket
+                </button>
+
+                <div style="margin-top: 14px;">
+                    <a href="javascript:void(0)" onclick="app.closeCelebrationAndGoToDash()" style="color: #64748b; font-size: 0.88rem; font-weight: 600; text-decoration: none;">
+                        Book another trip
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= Digital Ticket Modal with Scanner ================= -->
+    <div id="ticket-modal" class="modal-backdrop">
+        <div class="modal-container" style="max-width: 650px;">
+            <div class="modal-header">
+                <h3>🎟️ Digital Boarding Pass & QR Scanner</h3>
+                <button class="modal-close" onclick="app.closeTicketModal()">✕</button>
+            </div>
+            <div class="modal-body" style="padding: 20px;">
+                <div class="ticket-wrapper" id="printable-ticket">
+                    <div class="ticket-header">
+                        <div>
+                            <div class="brand-title" id="ticket-mode-badge">🚆 SMART RAIL CORRIDOR</div>
+                            <div style="font-size: 0.8rem; opacity: 0.9;" id="ticket-slot-title">Venkatadri Express</div>
+                        </div>
+                        <div class="ticket-status-pill">● CONFIRMED & ACTIVE</div>
+                    </div>
+
+                    <div class="ticket-body">
+                        <div class="ticket-pnr-banner">
+                            <div class="ticket-pnr-box">
+                                <div class="lbl">Booking Reference (PNR)</div>
+                                <div class="val" id="ticket-pnr">STB-TRN-78192</div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div class="ticket-field">
+                                    <div class="lbl">Travel Date</div>
+                                    <div class="val" id="ticket-date">THU 17 DEC</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="ticket-trip-details">
+                            <div class="ticket-field">
+                                <div class="lbl">Origin / Boarding</div>
+                                <div class="val" id="ticket-source">Kacheguda (Hyderabad)</div>
+                            </div>
+                            <div class="ticket-field" style="text-align: right;">
+                                <div class="lbl">Destination</div>
+                                <div class="val" id="ticket-destination">Tirupati Main Junction</div>
+                            </div>
+                            <div class="ticket-field">
+                                <div class="lbl">Departure Time</div>
+                                <div class="val" id="ticket-dep-time">04:45 PM</div>
+                            </div>
+                            <div class="ticket-field" style="text-align: right;">
+                                <div class="lbl">Platform / Bay</div>
+                                <div class="val" id="ticket-platform">Platform 4</div>
+                            </div>
+                        </div>
+
+                        <div class="ticket-seats-highlight">
+                            <div>
+                                <div style="font-size: 0.72rem; color: #64748b; font-weight: 700; text-transform: uppercase;">
+                                    Reserved Seat Numbers
+                                </div>
+                                <div class="seat-nums" id="ticket-seats">B5, B6</div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-size: 0.72rem; color: #64748b; font-weight: 700; text-transform: uppercase;">
+                                    Passengers
+                                </div>
+                                <div style="font-weight: 700; color: #0f172a; font-size: 0.95rem;" id="ticket-passengers">
+                                    D. Sindhura
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Scannable QR Code -->
+                        <div class="ticket-qr-section">
+                            <div id="ticket-qr-container" class="qr-code-box"></div>
+                            <div style="flex: 1;">
+                                <div style="font-size: 0.75rem; color: #475569; font-weight: 700; margin-bottom: 4px;">
+                                    LIVE DIGITAL QR VERIFICATION
+                                </div>
+                                <div style="font-size: 0.8rem; color: #64748b; margin-bottom: 6px;">
+                                    Conductor validation code. Present for optical scanning upon boarding.
+                                </div>
+                                <div class="barcode-sim"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ticket-actions-bar">
+                        <button class="btn btn-secondary btn-sm" onclick="window.print()">
+                            🖨️ Print / Save PDF
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= UNIVERSAL POP TOAST CONTAINER ================= -->
+    <div id="toast-container"></div>
+
+    <!-- ================= Footer ================= -->
+    <footer>
+        <p><strong>The Smart Online Ticket Booking System</strong> • Venkatadri Express • Vande Bharat Express • Guntur Passenger</p>
+        <p style="margin-top: 6px; font-size: 0.78rem;">Full-Stack Node.js Architecture with SQLite Real-Time Synchronization</p>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/qr.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
